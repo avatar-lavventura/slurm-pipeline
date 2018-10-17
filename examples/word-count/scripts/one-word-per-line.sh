@@ -15,8 +15,6 @@ set | egrep '^SP_' | sed 's/^/  /' >> $out
 for file in "$@"
 do
     task=`basename $file | cut -f1 -d.`
-    tr ' ' '\012' < $file > output/$task.words
-
-    # Pretend that we started a SLURM job to do more work on this task.
-    echo "TASK: $task $RANDOM"
+    jobid=$(sbatch $SP_DEPENDENCY_ARG $SP_NICE_ARG scripts/one-word-per-line_script.sh $file $task | cut -f4 -d' ')
+    echo TASK: $task $jobid
 done
